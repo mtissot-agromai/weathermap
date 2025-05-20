@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.main-container {
+    display: flex;
+    height: 70vh;
+}
+
+#map-container {
+    width: 70%;  /*  80% */
+    height: 100%; /* 100% */
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+#sidebar {
+    width: 30%;
+    padding: 10px;
+    background-color: #f8f8f8;
+    overflow-y: auto;
+    min-width: 40ch;
+}
+
+form#weather-form {
+    margin-bottom: 20px;
+}
+
+.alert-box {
+    padding: 10px;
+    margin-bottom: 10px;
+    color: white;
+    display: none;
+}
+
+.alert-red { background-color: rgb(218, 30, 39);
+                color: white; 
+                box-shadow: 0 0 10px rgba(0,0,0,0.7);
+                border-radius: 5px;}
+.alert-orange { background-color: rgb(255, 131, 43);
+                color: black; 
+                box-shadow: 0 0 10px rgba(0,0,0,0.7);
+                border-radius: 5px;
+            }
+.alert-yellow { background-color: rgb(241, 194, 27);
+                color: black; 
+                box-shadow: 0 0 10px rgba(0,0,0,0.7);
+                border-radius: 5px;
+            }
+
+.graphs-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 20px;
+    gap: 10px;
+}
+
+.graph-block {
+    flex: 1 1 49%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.graph {
+    width: 100%;
+    height: 400px;
+}
+
+.graph-caption {
+    margin-top: -20px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 100;
+}
+
+#variable-selector {
+    margin-bottom: 10px;
+}

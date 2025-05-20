@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather aba</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon-no-bg.png' %}" >
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'weathermap/index_styles.css' %}">
+    <script src="{% static 'weathermap/index_js.js' %}" defer></script>
+
+</head>
+<body>
+
+<div class="main-container">
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
+    <div id="sidebar">
+        <form id="weather-form">
+            <label>Latitude: <input type="text" id="latitude" name="latitude" value="-14"></label><br>
+            <label>Longitude: <input type="text" id="longitude" name="longitude" value="-50"></label><br>
+            <label for="safra">Safra: </label>
+            <select id="safra" name="safra">
+                <option value="noSafra">Escolher data manualmente</option>
+                <option value="2425">24/25</option>
+                <option value="2324">23/24</option>
+                <option value="2223">22/23</option>
+                <option value="2122">21/22</option>
+                <option value="2021">20/21</option>
+                <option value="1920">19/20</option>
+            </select><br>
+            <label>Start Date: <input type="date" name="start_date" id="start_date"></label><br>
+            <label>End Date: <input type="date" name="end_date" id="end_date"></label><br>
+            <label for="culture">Culture: </label>
+            <select id="culture" name="culture">
+                <option value="maize">Maize</option>
+                <option value="soy">Soy</option>
+                <option value="bean">Bean</option>
+                <option value="rice">Rice</option>
+                <option value="wheat">Wheat</option>
+            </select>
+            <!-- <br> -->
+            <!-- <label>Variable:
+                <select id="variable-selector">
+                    <option value="temperature">Temperature</option>
+                    <option value="humidity">Relative Humidity</option>
+                    <option value="windspeed">Windspeed</option>
+                </select>
+            </label> -->
+            <br><br>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="alert-red" class="alert-box alert-red"></div>
+        <div id="alert-orange" class="alert-box alert-orange"></div>
+        <div id="alert-yellow" class="alert-box alert-yellow"></div>
+    </div>
+</div>
+
+<!-- Scrollable Section -->
+<div class="graphs-container">
+    <div style="width: 100%; margin-bottom: 5px; display: none;" id="var-selector-title">
+        <label for="variable-selector">Select variable: </label>
+        <select id="variable-selector">
+            <option value="temp" selected>Temperature</option>
+            <option value="rhum">Relative Humidity</option>
+            <option value="wspd">Windspeed</option>
+            <!-- <optgroup label="Temperature">
+                <option value="avg_temp">Average Temperature</option>
+                <option value="max_temp">Maximum Temperature</option>
+                <option value="min_temp">Minimum Temperature</option>
+            </optgroup>
+            <optgroup label="Relative Humidity">
+                <option value="avg_rhum">Average Rel. Humidity</option>
+                <option value="max_rhum">Maximum Rel. Humidity</option>
+                <option value="min_rhum">Minimum Rel. Humidity</option>
+            </optgroup>
+            <optgroup label="Windspeed">
+                <option value="avg_wspd">Average Windspeed</option>
+                <option value="max_wspd">Maximum Windspeed</option>
+                <option value="min_wspd">Minimum Windspeed</option>
+            </optgroup> -->
+        </select>
+    </div>
+    <div class="graph-block">
+        <div id="other-graph" class="graph"></div>
+    </div>
+
+    <div class="graph-block">
+        <label for="show_alerts" id="show_alerts_text" style="display: none">Show alert periods?</label>
+        <input type="checkbox" id="show_alerts" name="show_alerts" style="display: none" checked>
+        <div id="prcp-graph" class="graph"></div>
+        <div class="graph-caption" id="prcp-total" style="display: none">Total precipitation: 0 mm</div>
+    </div>
+    
+    <!-- <div class="graph-block">
+        <div id="other-graph" class="graph"></div>
+    </div> -->
+</div>
+
+</body>
+</html>

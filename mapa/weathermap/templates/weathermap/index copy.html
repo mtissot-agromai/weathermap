@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather aba</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <!-- Plotly JS -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        </script>
+
+    <style>
+        #map { 
+        height: 90vh; 
+        width: 70%;
+        float: left;
+    }
+
+    #weather-form {
+        position: fixed;
+        top: 0px;
+        right: 0;
+        width: 28%;
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .graph {
+        width: 28%;
+        height: 32vh;
+        margin: 5px 0;
+        position: fixed;
+        right: 0;
+    }
+
+    #temp-graph {
+        top: 120px;
+        width: 35%;
+        right: -50px;
+    }
+
+    #prcp-graph {
+        top: calc(120px + 28vh);
+        width: 35%;
+        right: -50px;
+    }
+
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }
+
+        .active, .collapsible:hover {
+        background-color: #c0c0c0;
+        }
+
+        .temp-analysis, .prcp-analysis {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+        }
+
+        .button-temp{
+            position: fixed;
+            top: 120px;
+            right: -50px;
+            width: 35%;
+            background-color: #ffffff;
+            color: rgb(43, 43, 43);
+            cursor: pointer;
+            padding: 18px;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+        }
+/* 
+    #humidity-graph {
+        top: calc(120px + 56vh);
+        width: 35%;
+        right: -50px;
+    } */
+    </style>
+</head>
+<body>
+    <h1>Weather Checker</h1>
+
+    <div id="map"></div>
+
+    <form id="weather-form">
+        Latitude: <input type="text" name="latitude" id="latitude" value="-14"><br>
+        Longitude: <input type="text" name="longitude" id="longitude" value="-50"><br>
+        Start Date: <input type="date" name="start_date"><br>
+        End Date: <input type="date" name="end_date"><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="temp-graph" class="graph"></div>
+    <!-- <div id="temp-analysis" class="text"></div> -->
+    <button type="button" class="collapsible button-temp">V</button>
+    <div class="temp-analysis">
+    <p>Analise temp</p></div>
+
+    <div id="prcp-graph" class="graph"></div>
+    <button type="button" class="collapsible button-prcp">V</button>
+    <div id="prcp-analysis"> {{ analysis_text|safe }}</div>
+    <!-- <div id="humidity-graph" class="graph"></div> -->
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+              content.style.display = "none";
+            } else {
+              content.style.display = "block";
+            }
+          });
+        }
+        </script>
+
+    <script>
+    var map = L.map('map').setView([-14, -50], 5);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    maxZoom: 19}).addTo(map);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Labels &copy; Esri',
+    maxZoom: 19,
+    opacity: 1.0}).addTo(map);
+
+    var marker = L.marker([document.getElementById('latitude').value, document.getElementById('longitude').value]).addTo(map);
+
+    map.on('click', function(e) {
+        document.getElementById('latitude').value = e.latlng.lat.toFixed(4);
+        document.getElementById('longitude').value = e.latlng.lng.toFixed(4);
+
+        if (marker){
+            marker.setLatLng(e.latlng);
+            marker.bindPopup("(" + e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4) +")");
+
+        } else {
+            marker = L.marker(e.latlng).addTo(map);
+            marker.bindPopup("(" + e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4) +")");
+        }
+    });
+
+    document.getElementById('weather-form').addEventListener('change', function(e){
+        marker.setLatLng([document.getElementById('latitude').value, document.getElementById('longitude').value]);
+    });
+
+    document.getElementById('weather-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        console.log("Submitted");
+
+        fetch('get_weather_data/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Received data: ", data);
+            Plotly.newPlot('temp-graph', [{x: data.dates, y: data.temperature, type: 'scatter', name: 'Temperature'}], {title:'Temperature'});
+            Plotly.newPlot('prcp-graph', [{x: data.dates, y: data.precipitation, type: 'bar', name: 'Precipitation'}], {title: 'Precipitation'});
+            // Plotly.newPlot('humidity-graph', [{x: data.dates, y: data.humidity, type: 'scatter', name: 'Humidity'}], {title: 'Humidity'});
+            document.getElementById("prcp-analysis").innerHTML = data.analysis;
+        });
+    });
+    </script>
+</body>
+</html>

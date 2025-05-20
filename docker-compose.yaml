@@ -1,0 +1,10 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg17
+    container_name: /CONTAINER NAME/ # weather_service_container
+    environment:
+      POSTGRES_USER: /USER/ # neto
+      POSTGRES_PASSWORD: /PASSWORD/ # senha
+      POSTGRES_DB: /DB NAME/ # weather_service
+    ports:
+      - "5434:5432"
